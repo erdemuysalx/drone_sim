@@ -5,7 +5,6 @@ This is a description of how to set up a native drone development environment in
 
 # Setup Drone Development Environment
 
-
 ## ROS Noetic Ninjemys
 
 ### Setup your sources.list
@@ -123,6 +122,28 @@ sudo make install
 ```
 echo 'export GAZEBO_MODEL_PATH=~/ardupilot_gazebo/models' >> ~/.bashrc
 . ~/.bashrc
+```
+
+## Creating a workspace
+
+```
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin init
+wstool init src
+```
+
+## MAVROS 
+
+```
+rosinstall_generator --rosdistro kinetic mavlink | tee /tmp/mavros.rosinstall
+rosinstall_generator --upstream mavros | tee -a /tmp/mavros.rosinstall
+wstool merge -t src /tmp/mavros.rosinstall
+wstool update -t src -j4
+rosdep install --from-paths src --ignore-src -y
+sudo ./src/mavros/mavros/scripts/install_geographiclib_datasets.sh
+catkin build
+source devel/setup.bash
 ```
 
 ## Run Gazebo Simulator & Ardupilot SITL
